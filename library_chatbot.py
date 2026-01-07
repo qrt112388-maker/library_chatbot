@@ -1,6 +1,12 @@
 import os
 import sys
 import streamlit as st
+def set_openai_key():
+    api_key = st.secrets.get("OPENAI_API_KEY", None)
+    if not api_key:
+        st.error("❌ OPENAI_API_KEY가 Streamlit secrets에 설정되어 있지 않습니다.")
+        st.stop()
+    os.environ["OPENAI_API_KEY"] = api_key
 
 # ==============================
 # SQLite (Chroma용) 충돌 방지
@@ -133,7 +139,7 @@ Answer in Korean, politely, and use emojis 😊
 # Streamlit UI
 # ==============================
 st.header("📚 국립부경대 도서관 규정 Q&A 챗봇")
-
+set_openai_key()
 model_option = st.selectbox(
     "GPT 모델 선택",
     ("gpt-4o-mini", "gpt-3.5-turbo-0125"),
@@ -172,3 +178,4 @@ if user_input := st.chat_input("질문을 입력하세요"):
                         doc.metadata.get("source", "출처 없음"),
                         help=doc.page_content,
                     )
+
